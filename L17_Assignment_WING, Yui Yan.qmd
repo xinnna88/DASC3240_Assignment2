@@ -96,9 +96,76 @@ Note: If you want to specify setting for a code chunk, you can use `#|` for each
 
 ```{r}
 #| echo: true
-# YOUR CODE HERE
-# xxxxx
+library(tidyverse)   # dplyr, ggplot2, tidyr, readr
+library(lubridate)   # safe date handling (though we only use year)
+library(plotly)
+library(viridis)
+
+whale_data <- read_csv("C:/Users/HP/Downloads/BIOTIME_raw_data_192.csv", show_col_types = FALSE)
+
+# Quick look at structure and first rows
+glimpse(whale_data)
+head(whale_data)
 ```
+```{r}
+library(dplyr) 
+
+annual_catch <- whale_clean %>%
+  group_by(YEAR, Species_label) %>%
+  summarise(total_catch = sum(ABUNDANCE, na.rm = TRUE), .groups = "drop")
+
+whale_clean <- whale_data %>%
+  filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>%
+  # Ensure abundance is numeric (it already is, but safe)
+  mutate(ABUNDANCE = as.numeric(ABUNDANCE))
+
+# Check distinct species names (should be 6)
+unique(whale_clean$valid_name)
+
+# Create a short label for plotting (optional but nicer)
+whale_clean <- whale_clean %>%
+  mutate(Species_label = case_when(
+    str_detect(valid_name, "physalus")    ~ "Fin whale",
+    str_detect(valid_name, "musculus")    ~ "Blue whale",
+    str_detect(valid_name, "borealis")    ~ "Sei whale",
+    str_detect(valid_name, "bonaerensis") ~ "Antarctic minke whale",
+    str_detect(valid_name, "novaeangliae")~ "Humpback whale",
+    TRUE ~ valid_name   # fallback
+  ))
+
+species_list <- unique(annual_catch$Species_label)
+n_col <- length(species_list)
+base_colors <- viridis(n_col, option = "D")   # n_col 是物种数量
+
+p <- plot_ly(annual_catch, 
+             x = ~as.numeric(YEAR), 
+             y = ~total_catch, 
+             color = ~Species_label,
+             colors = base_colors,
+             type = 'scatter', 
+             mode = 'lines+markers',
+             line = list(width = 2),
+             marker = list(size = 4),
+             text = ~paste("Species:", Species_label, 
+                           "<br>Year:", YEAR, 
+                           "<br>Catch:", total_catch),
+             hoverinfo = "text") %>%
+  layout(title = "Annual whale catches (hover to highlight in red)",
+         xaxis = list(title = "Year", type = "linear", dtick = 5),
+         yaxis = list(title = "Catch"),
+         legend = list(title = list(text = "Species")),
+         margin = list(b = 60)) %>%
+  highlight(on = "plotly_hover",
+            dynamic = TRUE,
+            selectize = TRUE,
+            opacityDim = 0.2)   # 非高亮线条透明度 0.2（数值越小越淡）
+
+p
+```
+
+
+
+
 
 ### Animation using `gganimate`
 
@@ -125,6 +192,48 @@ xxxxxxxxxxxxxx
 :::
 
 ```{r}
-# YOUR CODE HERE
-# xxxxx
+library(tidyverse)
+library(gganimate)
+library(gifski)
+library(transformr)
+
+# 准备数据
+spatial_data <- whale_clean %>%
+  filter(!is.na(LATITUDE), !is.na(LONGITUDE)) %>%
+  mutate(LONGITUDE_jitter = LONGITUDE + runif(n(), -0.2, 0.2))
+
+# --- 动态计算 y 轴范围 ---
+lat_min <- min(spatial_data$LATITUDE, na.rm = TRUE)
+lat_max <- max(spatial_data$LATITUDE, na.rm = TRUE)
+# 添加 1 度边距，避免点贴边
+ylim_custom <- c(lat_min - 1, lat_max + 1)
+
+# 静态图
+p_spatial <- ggplot(spatial_data, aes(x = LONGITUDE_jitter, y = LATITUDE, 
+                                      size = ABUNDANCE, color = Species_label)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(range = c(1, 10), name = "Catch (individuals)") +
+  scale_color_viridis_d(option = "D", name = "Species") +
+  labs(title = "Spatial distribution of whale catches over time",
+       subtitle = "Year: {frame_time}",
+       x = "Longitude (jittered)", y = "Latitude",
+       caption = "Point size = number of individuals caught in 1° cell") +
+  coord_quickmap(xlim = c(min(spatial_data$LONGITUDE) - 5, 
+                          max(spatial_data$LONGITUDE) + 5),
+                 ylim = ylim_custom) +   # 使用动态范围
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# 动画（调整速度：降低 fps 到 4，增加 nframes 倍数到 3）
+anim_spatial <- p_spatial +
+  transition_time(YEAR) +
+  ease_aes('linear') +
+  shadow_mark(alpha = 0.2, size = 0.8)
+
+# 渲染：nframes = 年份数 * 3，fps = 4 → 更慢、更平滑
+animate(anim_spatial, 
+        nframes = length(unique(spatial_data$YEAR)) * 3,
+        fps = 4, 
+        width = 800, height = 600, 
+        renderer = gifski_renderer())
 ```

@@ -14,14 +14,14 @@ execute:
 
 # Name
 
-[**Name**]{style="color:red"}**: XXXXXX**
+[**Name**]{style="color:red"}**: CHEN, Yanyu**
 
 # Generative AI declaration
 
 Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[XXXX\] to \[XXXX\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
 
 ::: callout
-xxxxxxxxxxxxxx
+During the assignment, I used Perplexity AI to help formatting the plots and debug the R code for the interactive Plotly plots and gganimate animation. I subsequently reviewed, tested, and edited all code and narrative, and I take full responsibility for the final version.
 :::
 
 # Dataset
@@ -53,7 +53,7 @@ BIOTIME (CC0) <https://biotime.st-andrews.ac.uk/usageGuidelines.php>
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+I chose **`ggplot2::msleep`** dataset.
 :::
 
 ### Introduction
@@ -65,7 +65,54 @@ xxxxxxxxxxxxxx
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+Acccording to [An updated and expanded version of the mammals sleep dataset — msleep • ggplot2](https://ggplot2.tidyverse.org/reference/msleep.html), the `msleep` dataset is a built-in dataset in the `ggplot2` package that contains sleep and other body data for **83 mammal species**. It was originally compiled by V. M. Savage and G. B. West (2007) and later updated by the R community for use in data visualization exercises. Using this dataset, I will explore how body mass and dietary type jointly influence mammalian sleep patterns, including total sleep duration, sleep cycle length, and REM sleep time.
+
+The dataset has **11 variables**:
+
+| Variable | Description |
+|------------------------------------|------------------------------------|
+| `name` | Common name of the mammal species |
+| `genus` | Taxonomic genus |
+| `vore` | Dietary category (carnivore, herbivore, omnivore, insectivore) |
+| `order` | Taxonomic order (e.g., Carnivora, Primates, Rodentia) |
+| `conservation` | IUCN conservation status (lc, nt, vu, en, cd, domesticated) |
+| `sleep_total` | Total sleep time (hours/day) |
+| `sleep_rem` | REM sleep time (hours/day) |
+| `sleep_cycle` | Length of one sleep cycle (hours) |
+| `awake` | Hours spent awake per day (= 24 − sleep_total) |
+| `brainwt` | Brain weight (kg) |
+| `bodywt` | Body weight (kg) |
+
+Acoording to Savage and West (2007), the `msleep` dataset measures mammalian sleep using **direct observational and physiological recordings**, compiled from multiple scientific sources. Here's how each variable is measured:
+
+1.  Sleep Time Variables
+
+The core sleep measurements — `sleep_total`, `sleep_rem`, `sleep_cycle`, and `awake` — are all recorded **in hours per day** . These values originate primarily from the compilations by Zepelin (the reference book on mammalian sleep data), which aggregated electrophysiological studies on individual species . In those original studies, sleep states were distinguished using **electroencephalography (EEG)** and behavioral observation to differentiate total sleep, REM sleep, and non-REM sleep cycles.
+
+2.  Body & Brain Mass
+
+`bodywt` (body weight) and `brainwt` (brain weight) are both recorded **in kilograms** . Body masses were drawn from Meddis (1983) and supplemented by Smith et al. and Nowak's mammal compendiums when values were missing . In a few cases where multiple subspecies were grouped together (e.g., four species of *Microtus*), **logarithmic averages** of body masses were calculated to stay consistent with the sleep data .
+
+3.  Statistical Treatment
+
+Since relative measurement error is approximately constant across species (rather than absolute error), all allometric analyses in the paper are performed in **log-log space** via ordinary least squares (OLS) regression . This means a mouse that weighs 0.02 kg and a elephant that weighs 2,500 kg are treated on equal footing statistically — the dataset spans **six orders of magnitude** in body size .
+
+```{r}
+library(ggplot2)
+
+# Load the dataset
+data(msleep)
+
+# View the header of the dataset
+head(msleep)
+
+# View the structure and column types of the dataset
+str(msleep)
+
+# See all unique categories
+unique(msleep$vore)
+unique(msleep$order)
+```
 :::
 
 ### Interactive plot(s) using `plotly`
@@ -77,7 +124,17 @@ xxxxxxxxxxxxxx
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Plot 1 — Interactive scatter plot** of `sleep_total` vs `log10(bodywt)`, colored by diet type (`vore`), with per-diet trend lines and an overall trend line that can be toggled on/off using buttons.
+
+-   **Why this plot type?** A scatter plot is the natural choice for showing the relationship between two continuous variables (body weight and sleep). Using log-scaled body weight prevents a few extremely heavy species (e.g., elephants) from compressing the rest of the data. Coloring by diet reveals whether the negative relationship holds across all dietary lifestyles. The toggle buttons let the reader compare the per-diet trends against the overall trend.
+-   **Strengths**: Hover tooltips show species name, exact body weight, sleep hours, and diet — this lets the reader identify individual data points without cluttering the plot. The toggle feature adds an extra layer of interactivity.
+-   **Weaknesses**: Points may overlap in dense regions (e.g., small-bodied rodents), making it harder to distinguish individual species even with interactivity.
+
+**Plot 2 — Interactive box-and-jitter plot** of `sleep_total` grouped by diet type, where each diet category's box and jitter points are linked under one legend entry so they toggle on/off together.
+
+-   **Why?** This supplements the scatter plot by directly comparing the distribution of sleep duration across diet groups, making group-level differences obvious.
+-   **Strengths**: Combining box plots with jittered individual points shows both the summary statistics (median, IQR) and the raw data. Hover identifies each species. Each diet has a single unified legend entry for clean toggling.
+-   **Weaknesses**: With only 5 insectivores, the box plot for that group is less reliable and could be misleading about the population distribution.
 :::
 
 Note: At least one plot is required, but multiple plots are allowed
@@ -89,15 +146,204 @@ Note: At least one plot is required, but multiple plots are allowed
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Plot 1** aims to show the reader that **larger mammals tend to sleep less**, and that this negative relationship is consistent across all four diet types (carnivore, herbivore, omnivore, insectivore). The overall trend toggle allows the reader to see whether any diet group deviates from the global pattern.
+
+**Plot 2** aims to show that **insectivores and omnivores tend to sleep more than herbivores**, suggesting that diet type is another important factor beyond body size. This gives the reader a complementary perspective to the scatter plot.
 :::
 
 Note: If you want to specify setting for a code chunk, you can use `#|` for each option (for example, `#| echo: true`). Rmarkdown code chunk still works (for example, `{r echo = true}`), but Quarto style is recommended.
 
 ```{r}
 #| echo: true
-# YOUR CODE HERE
-# xxxxx
+
+# Clean the data, clear the NAs in the needed columns in the dataset and change the diet labels to full name
+msleep_clean <- msleep %>%
+  filter(!is.na(vore), !is.na(bodywt), !is.na(sleep_total)) %>%
+  mutate(
+    log_bodywt = log10(bodywt),
+    vore_label = case_when(
+      vore == "carni"   ~ "Carnivore",
+      vore == "herbi"   ~ "Herbivore",
+      vore == "omni"    ~ "Omnivore",
+      vore == "insecti" ~ "Insectivore"
+    )
+  )
+
+# Set the color for each diet category
+diet_colors <- c(
+  "Carnivore"   = "#E63946",
+  "Herbivore"   = "#2A9D8F",
+  "Omnivore"    = "#E9C46A",
+  "Insectivore" = "#264653"
+)
+
+# View the cleaned dataset
+str(msleep_clean)
+```
+
+```{r}
+library(dplyr)
+
+# Pre-compute LM fitted values per diet group
+lm_lines <- msleep_clean %>%
+  group_by(vore_label) %>%
+  do(data.frame(
+    log_bodywt = .$log_bodywt,
+    fitted = fitted(lm(sleep_total ~ log_bodywt, data = .))
+  ))
+
+p1 <- ggplot(msleep_clean, aes(
+    x = log_bodywt, y = sleep_total,
+    color = vore_label          # ← keep color here (shared)
+  )) +
+  geom_point(
+    aes(text = paste("Species:", name,
+                     "<br>Body weight:", round(bodywt, 2), "kg",
+                     "<br>Sleep:", sleep_total, "hrs/day",
+                     "<br>Diet:", vore_label)),
+    size = 2, alpha = 0.7        # ← text aes only on points
+  ) +
+  geom_line(
+    data = lm_lines,
+    aes(x = log_bodywt, y = fitted, color = vore_label),
+    linetype = "dashed", linewidth = 0.8
+  ) +
+  scale_color_manual(values = c(
+    "Carnivore"   = "#E63946",
+    "Herbivore"   = "#2A9D8F",
+    "Omnivore"    = "#E9C46A",
+    "Insectivore" = "#264653"
+  )) +
+  labs(
+    title = "Bigger Mammals Tend to Sleep Less",
+    x = "Body Weight (log₁₀ kg)",
+    y = "Total Sleep (hours/day)",
+    color = "Diet Type"
+  ) +
+  theme_minimal(base_size = 13)
+
+ggplotly(p1, tooltip = "text")
+```
+
+```{r}
+#| echo: true
+#| fig-width: 9
+#| fig-height: 6
+
+# Plot 1
+fig1 <- plot_ly()
+
+# Add scatter points and per-diet trend lines for each diet category
+for (d in names(diet_colors)) {
+  df_sub <- msleep_clean %>% filter(vore_label == d)
+  
+  # Scatter points
+  fig1 <- fig1 %>% add_markers(
+    data = df_sub,
+    x = ~log_bodywt, y = ~sleep_total,
+    color = I(diet_colors[d]),
+    name = d,
+    legendgroup = d,
+    text = ~paste("Species:", name,
+                  "<br>Body weight:", round(bodywt, 2), "kg",
+                  "<br>Sleep:", sleep_total, "hrs/day",
+                  "<br>Diet:", vore_label),
+    hoverinfo = "text",
+    marker = list(size = 9, opacity = 0.7)
+  )
+  
+  # Per-diet trend line
+  fit <- lm(sleep_total ~ log_bodywt, data = df_sub)
+  xrange <- range(df_sub$log_bodywt)
+  xseq <- seq(xrange[1], xrange[2], length.out = 50)
+  yseq <- predict(fit, newdata = data.frame(log_bodywt = xseq))
+  
+  fig1 <- fig1 %>% add_lines(
+    x = xseq, y = yseq,
+    line = list(color = diet_colors[d], dash = "dash", width = 2),
+    name = paste(d, "(trend)"),
+    legendgroup = d,
+    showlegend = FALSE,
+    hoverinfo = "skip"
+  )
+}
+
+# Add overall trend line (all diets combined)
+fit_all <- lm(sleep_total ~ log_bodywt, data = msleep_clean)
+xseq_all <- seq(min(msleep_clean$log_bodywt),
+                max(msleep_clean$log_bodywt), length.out = 100)
+yseq_all <- predict(fit_all, newdata = data.frame(log_bodywt = xseq_all))
+
+fig1 <- fig1 %>% add_lines(
+  x = xseq_all, y = yseq_all,
+  line = list(color = "black", width = 2.5),
+  name = "Overall Trend",
+  legendgroup = "overall",
+  hoverinfo = "skip"
+)
+
+# Add the labels and title of the fig
+fig1 <- fig1 %>% layout(
+  title = list(text = "Body Mass, Diet, and Sleep Duration"),
+  xaxis = list(title = "Body Weight (log\u2081\u2080 kg)"),
+  yaxis = list(title = "Total Sleep (hours/day)"),
+  legend = list(title = list(text = "Diet Type"))
+)
+
+fig1
+```
+
+```{r}
+#| echo: true
+#| fig-width: 9
+#| fig-height: 5
+
+## Plot 2
+
+# Order diets by median sleep for x-axis ordering
+diet_order <- msleep_clean %>%
+  group_by(vore_label) %>%
+  summarise(med = median(sleep_total)) %>%
+  arrange(med) %>%
+  pull(vore_label)
+
+fig2 <- plot_ly()
+
+for (d in diet_order) {
+  df_sub <- msleep_clean %>% filter(vore_label == d)
+
+  fig2 <- fig2 %>% add_boxplot(
+    data = df_sub,
+    y = ~sleep_total,
+    x = d,
+    name = d,
+    legendgroup = d,
+    showlegend = TRUE,
+    line = list(color = diet_colors[d]),
+    fillcolor = paste0(diet_colors[d], "66"),
+    boxpoints = "all",
+    jitter = 0.4,
+    pointpos = 0,
+    marker = list(color = diet_colors[d], size = 7, opacity = 0.7),
+    text = ~paste("Species:", name,
+                  "<br>Sleep:", sleep_total, "hrs/day",
+                  "<br>Diet:", vore_label),
+    hoverinfo = "text"
+  )
+}
+
+fig2 <- fig2 %>% layout(
+  title = list(text = "Sleep Duration Distribution by Diet Type"),
+  xaxis = list(
+    title = "Diet Type (ordered by median sleep)",
+    categoryorder = "array",
+    categoryarray = diet_order
+  ),
+  yaxis = list(title = "Total Sleep (hours/day)"),
+  legend = list(title = list(text = "Diet Type"))
+)
+
+fig2
 ```
 
 ### Animation using `gganimate`
@@ -109,7 +355,15 @@ Note: If you want to specify setting for a code chunk, you can use `#|` for each
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+I create two animations using **`transition_states()`** to cycle through diet types (`vore`), revealing how the relationship between body mass and two different sleep metrics varies across dietary groups:
+
+**Animation 1 — Body mass vs sleep cycle length**, transitioning by diet type. Each frame shows the species belonging to one diet group, along with a linear trend line fitted to that group.
+
+**Animation 2 — Body mass vs REM sleep duration**, transitioning by diet type. Same structure, but showing REM sleep on the y-axis.
+
+-   **Why this animation type?** `transition_states()` is ideal for cycling through discrete categorical groups, allowing the viewer to focus on one diet type at a time. By separating the two sleep metrics into two animations, the viewer can assess whether the body-mass relationship affects the sleep cycle and REM sleep differently.
+-   **Strengths**: The animation reveals whether the "bigger = shorter/longer sleep cycle" or "bigger = less REM" relationships hold within each diet group, or whether certain diet types break the pattern. The fade transition makes it easy to see each new group appear.
+-   **Weaknesses**: Sleep cycle data has substantial missing values (only 31 of 76 species with diet data available), making that animation's patterns less robust. The viewer must watch the full loop to compare across diets and cannot easily view two groups simultaneously.
 :::
 
 Note: At least one animation is required, but multiple animations are allowed
@@ -121,10 +375,98 @@ Note: At least one animation is required, but multiple animations are allowed
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Animation 1** aims to show whether **larger mammals have longer sleep cycles**, and how this relationship differs by diet. Savage and West (2007) predicted that sleep cycle length scales with body/brain mass, and this animation lets the viewer see whether the pattern is consistent across carnivores, herbivores, omnivores, and insectivores.
+
+**Animation 2** aims to show whether **larger mammals get less REM sleep**. REM sleep is thought to play a special role in neural reorganization and memory consolidation (Cao et al., 2020), and the animation reveals whether the body-mass–REM relationship varies with dietary lifestyle.
 :::
 
 ```{r}
-# YOUR CODE HERE
-# xxxxx
+# Load gganimate
+library(gganimate)
 ```
+
+#### Animation 1: Body Mass vs Sleep Cycle Length by Diet
+
+```{r}
+#| echo: true
+#| fig-width: 8
+#| fig-height: 6
+
+# Animation 1
+msleep_cycle <- msleep_clean %>%
+  filter(!is.na(sleep_cycle))
+
+anim1 <- ggplot(msleep_cycle, aes(
+    x = log_bodywt, y = sleep_cycle,
+    color = vore_label
+  )) +
+  geom_point(aes(size = bodywt), alpha = 0.75) +
+  geom_smooth(method = "lm", se = FALSE, linetype = "dashed",
+              linewidth = 0.8, color = "grey40") +
+  scale_size_continuous(range = c(2, 10), guide = "none") +
+  scale_color_manual(values = diet_colors) +
+  labs(
+    title = "Body Mass and Sleep Cycle Length",
+    subtitle = "Diet: {closest_state}",
+    x = "Body Weight (log10 kg)",
+    y = "Sleep Cycle Length (hours)",
+    color = "Diet Type"
+  ) +
+  theme_minimal(base_size = 14) +
+  transition_states(vore_label, transition_length = 2, state_length = 1.5) +
+  enter_fade() + exit_fade()
+
+animate(anim1, nframes = 80, fps = 8,
+        width = 700, height = 500,
+        renderer = gifski_renderer())
+```
+
+#### Animation 2: Body Mass vs REM Sleep Duration by Diet
+
+```{r}
+#| echo: true
+#| fig-width: 8
+#| fig-height: 6
+
+# Body mass vs REM sleep by diet
+msleep_rem <- msleep_clean %>%
+  filter(!is.na(sleep_rem))
+
+anim2 <- ggplot(msleep_rem, aes(
+    x = log_bodywt, y = sleep_rem,
+    color = vore_label
+  )) +
+  geom_point(aes(size = bodywt), alpha = 0.75) +
+  geom_smooth(method = "lm", se = FALSE, linetype = "dashed",
+              linewidth = 0.8, color = "grey40") +
+  scale_size_continuous(range = c(2, 10), guide = "none") +
+  scale_color_manual(values = diet_colors) +
+  labs(
+    title = "Body Mass and REM Sleep Duration",
+    subtitle = "Diet: {closest_state}",
+    x = "Body Weight (log10 kg)",
+    y = "REM Sleep (hours/day)",
+    color = "Diet Type"
+  ) +
+  theme_minimal(base_size = 14) +
+  transition_states(vore_label, transition_length = 2, state_length = 1.5) +
+  enter_fade() + exit_fade()
+
+animate(anim2, nframes = 80, fps = 8,
+        width = 700, height = 500,
+        renderer = gifski_renderer())
+```
+
+# References
+
+Cao, J., Herman, A. B., West, G. B., & Bhatt, D. L. (2020). Unraveling why we sleep: Quantitative analysis reveals abrupt transition from neural reorganization to repair in early development. *Science Advances*, *6*(38), eaba0398. <https://doi.org/10.1126/sciadv.aba0398>
+
+Kryger, M. H., Roth, T., & Dement, W. C. (Eds.). (2017). Principles and practice of sleep medicine (6th ed.). Elsevier. <https://10.1016/C2012-0-03543>
+
+Savage, V. M., & West, G. B. (2007). A quantitative, theoretical framework for understanding mammalian sleep. *Proceedings of the National Academy of Sciences*, *104*(3), 1051–1056. <https://doi.org/10.1073/pnas.0610080104>
+
+Sievert, C. (2020). *Interactive web-based data visualization with R, plotly, and shiny*. Chapman and Hall/CRC. <https://plotly-r.com>
+
+Wickham, H. (2016). *ggplot2: Elegant graphics for data analysis* (2nd ed.). Springer-Verlag. <https://ggplot2.tidyverse.org>
+
+Pedersen, T. L., & Robinson, D. (2024). *gganimate: A grammar of animated graphics* (R package version 1.0.9). <https://CRAN.R-project.org/package=gganimate>

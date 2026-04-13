@@ -39,9 +39,9 @@ The repository is structured as follows:
 
 # Member contributions
 
-| Member | Dataset | Story Angle |
+| Member | Dataset | Contribution |
 |------------------------|------------------------|------------------------|
-| CHEN, Yanyu | `ggplot2::msleep` | Bigger mammals sleep less — sleep duration vs body size by diet and order |
+| CHEN, Yanyu | `ggplot2::msleep` | Visualization of `ggplot2::msleep` |
 | *(other members)* | *(to be filled)* | *(to be filled)* |
 
 # References

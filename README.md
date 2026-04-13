@@ -35,13 +35,31 @@ The repository is structured as follows:
 
 -   **README.md** — This file; provides an overview of the project structure and group members.
 -   **L17_Assignment_CHEN-Yanyu.qmd** — CHEN Yanyu's individual analysis of the `ggplot2::msleep` dataset, exploring how mammalian body size relates to sleep duration across different diet types and taxonomic orders.
--   *(Additional .qmd files for each group member will be added here.)*
+-   **L17_Assignment_XXX.qmd ...**
 
 # Member contributions
 
 | Member | Dataset | Story Angle |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | CHEN, Yanyu | `ggplot2::msleep` | Bigger mammals sleep less — sleep duration vs body size by diet and order |
 | *(other members)* | *(to be filled)* | *(to be filled)* |
 
 # References
+
+Cao, J., Herman, A. B., West, G. B., & Bhatt, D. L. (2020). Unraveling why we sleep: Quantitative analysis reveals abrupt transition from neural reorganization to repair in early development. *Science Advances*, *6*(38), eaba0398. <https://doi.org/10.1126/sciadv.aba0398>
+
+Meddis, R. (1983). Sleep mechanisms and functions in humans and animals. In A. Mayes (Ed.), *Sleep mechanisms and functions in humans and animals*. Van Nostrand Reinhold.
+
+Nowak, R. N. (1991). *Walker's mammals of the world*. Johns Hopkins University Press.
+
+Savage, V. M., & West, G. B. (2007). A quantitative, theoretical framework for understanding mammalian sleep. *Proceedings of the National Academy of Sciences*, *104*(3), 1051–1056. <https://doi.org/10.1073/pnas.0610080104>
+
+Sievert, C. (2020). *Interactive web-based data visualization with R, plotly, and shiny*. Chapman and Hall/CRC. <https://plotly-r.com>
+
+Smith, F. A., Lyons, S. K., Ernest, S. K. M., Jones, K. E., Kaufman, D. M., Dayan, T., Marquet, P. A., Brown, J. H., & Haskell, J. P. (2003). Body mass of late Quaternary mammals. *Ecology*, 84(12), 3403. <https://doi.org/10.1890/02-9003>
+
+Pedersen, T. L., & Robinson, D. (2024). *gganimate: A grammar of animated graphics* (R package version 1.0.9). <https://CRAN.R-project.org/package=gganimate>
+
+Wickham, H. (2016). *ggplot2: Elegant graphics for data analysis* (2nd ed.). Springer-Verlag. <https://ggplot2.tidyverse.org>
+
+Zepelin, H. (1989). Mammalian sleep. In M. H. Kryger, T. Roth, & W. C. Dement (Eds.), *Principles and practice of sleep medicine* (2nd ed., pp. 30–49). Saunders.

@@ -46,7 +46,7 @@ The repository is structured as follows:
 | Member | Dataset | Contribution |
 |------------------------|------------------------|------------------------|
 | CHEN, Yanyu | `ggplot2::msleep` | Visualization of `ggplot2::msleep` |
-| WING, Yui Yan | `BIOTIME_raw_data_192` | `(to be filled)` |
+| WING, Yui Yan | `BIOTIME_raw_data_192` | `Visualization of BIOTIME_raw_data_192` |
 | LI, Yuan | `ggplot2::midwest` | `Visualization of ggplot2::midwest` |
 | CHEN, Hong Xing | `palmerpenguins::penguins` | `Visualization of palmerpenguins::penguins` |
 | YING, Yu Ling | `BIOTIME_raw_data_232.csv` | `Visualization of BIOTIME_raw_data_232.csv` |

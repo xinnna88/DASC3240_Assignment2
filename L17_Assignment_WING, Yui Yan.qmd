@@ -18,7 +18,7 @@ execute:
 
 # Generative AI declaration
 
-Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[XXXX\] to \[XXXX\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
+Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[grok\] to \[help me review me code\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
 
 ::: callout
 xxxxxxxxxxxxxx
@@ -94,13 +94,13 @@ The purpose is to show the time trends of industrial whaling in the Southern Oce
 Note: If you want to specify setting for a code chunk, you can use `#|` for each option (for example, `#| echo: true`). Rmarkdown code chunk still works (for example, `{r echo = true}`), but Quarto style is recommended.
 
 ```{r}
-#| echo: true
+
 library(tidyverse)  
 library(lubridate)   
 library(plotly)
 library(viridis)
 
-whale_data <- read_csv("C:/Users/HP/Downloads/BIOTIME_raw_data_192.csv", show_col_types = FALSE)
+whale_data <- read_csv("data/BIOTIME_raw_data_192.csv")
 
 whale_clean <- whale_data %>%
   filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>%
@@ -124,15 +124,15 @@ annual_catch <- whale_clean %>%
 
 whale_clean <- whale_data %>%
   filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>%
-  # Ensure abundance is numeric (it already is, but safe)
+  # Ensure abundance is numeric
   mutate(ABUNDANCE = as.numeric(ABUNDANCE))
 
-# Check distinct species names (should be 6)
+# Check distinct species names 
 unique(whale_clean$valid_name)
 
-
-species_list <- unique(annual_catch$Species_label)
-n_col <- length(species_list)
+# Create an interactive line plot with points using plotly
+species_list <- unique(annual_catch$Species_label)# Get unique species for color mapping
+n_col <- length(species_list) # Generate a color palette with enough distinct colors for each species
 base_colors <- viridis(n_col, option = "D")   
 
 p <- plot_ly(annual_catch, 
@@ -194,23 +194,7 @@ library(gganimate)
 library(gifski)
 library(transformr)
 
-
-whale_clean <- whale_data %>%
-  filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>%
-  mutate(ABUNDANCE = as.numeric(ABUNDANCE))
-
-
-whale_clean <- whale_clean %>%
-  mutate(Species_label = case_when(
-    str_detect(valid_name, "physalus")    ~ "Fin whale",
-    str_detect(valid_name, "musculus")    ~ "Blue whale",
-    str_detect(valid_name, "borealis")    ~ "Sei whale",
-    str_detect(valid_name, "bonaerensis") ~ "Antarctic minke whale",
-    str_detect(valid_name, "novaeangliae")~ "Humpback whale",
-    TRUE ~ valid_name
-  ))
-
-
+# Prepare spatial data for animation
 spatial_data <- whale_clean %>%
   filter(!is.na(LATITUDE), !is.na(LONGITUDE)) %>%
   mutate(LONGITUDE_jitter = LONGITUDE + runif(n(), -0.2, 0.2))
@@ -219,9 +203,10 @@ spatial_data <- whale_clean %>%
 lat_min <- min(spatial_data$LATITUDE, na.rm = TRUE)
 lat_max <- max(spatial_data$LATITUDE, na.rm = TRUE)
 
+# Add some padding to latitude limits
 ylim_custom <- c(lat_min - 2, lat_max + 2)
 
-
+# Create the base plot
 p_spatial <- ggplot(spatial_data, aes(x = LONGITUDE_jitter, y = LATITUDE, 
                                       size = ABUNDANCE, color = Species_label)) +
   geom_point(alpha = 0.7) +
@@ -229,7 +214,7 @@ p_spatial <- ggplot(spatial_data, aes(x = LONGITUDE_jitter, y = LATITUDE,
   scale_color_viridis_d(option = "D", name = "Species") +
   labs(title = "Spatial distribution of whale catches over time",
        subtitle = "Year: {frame_time}",
-       x = "Longitude (jittered)", y = "Latitude",
+       x = "Longitude ", y = "Latitude",
        caption = "Point size = number of individuals caught in 1° cell") +
   coord_quickmap(xlim = c(min(spatial_data$LONGITUDE) - 5, 
                           max(spatial_data$LONGITUDE) + 5),
@@ -237,7 +222,7 @@ p_spatial <- ggplot(spatial_data, aes(x = LONGITUDE_jitter, y = LATITUDE,
   theme_minimal() +
   theme(legend.position = "bottom")
 
-
+# Create the animation
 anim_spatial <- p_spatial +
   transition_time(YEAR) +
   ease_aes('linear') +

@@ -37,9 +37,9 @@ The repository is structured as follows:
 - **`data/`** — Folder containing all raw datasets used in this assignment (including `BIOTIME_raw_data_192.csv` and `BIOTIME_raw_data_232.csv`).
 - **`L17_Assignment_CHEN-Yanyu.qmd`** — CHEN Yanyu's individual analysis of the `ggplot2::msleep` dataset, exploring how mammalian body size relates to sleep duration across different diet types and taxonomic orders.
 - **`L17_Assignment_WING-YuiYan.qmd`** — WING Yui Yan's analysis of the `BIOTIME_raw_data_192` dataset, exploring annual catch trends of major whale species in the Southern Ocean from 1932 to 1980, with a focus on the impact of industrial whaling across different species and decades.
-- **`L17_Assignment_LI-Yuan.qmd`** — LI Yuan's analysis.
-- **`L17_Assignment_CHEN-HongXing.qmd`** — CHEN Hong Xing's analysis.
-- **`L17_Assignment_YING-YuLing.qmd`** — YING Yu Ling's analysis.
+- **`L17_Assignment_LI-Yuan.qmd`** — LI Yuan's analysis of ggplot2::midwest
+- **`L17_Assignment_CHEN-HongXing.qmd`** — CHEN Hong Xing's analysis of palmerpenguins::penguins
+- **`L17_Assignment_YING-YuLing.qmd`** — YING Yu Ling's analysis of BIOTIME_raw_data_232.csv
 
 # Member contributions
 

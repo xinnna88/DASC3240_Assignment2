@@ -50,3 +50,6 @@ The repository is structured as follows:
 | LI, Yuan | `ggplot2::midwest` | Visualization of `ggplot2::midwest` |
 | CHEN, Hong Xing | `palmerpenguins::penguins` | Visualization of `palmerpenguins::penguins` |
 | YING, Yu Ling | `BIOTIME_raw_data_232.csv` | Visualization of `BIOTIME_raw_data_232.csv` |
+
+#Reference
+Maria Dornelas, Laura H. Antão, Amanda E. Bates, Viviana Brambilla, Jonathan M. Chase, Cher F. Y. Chow, Ada Fontrodona-Eslava, Anne E. Magurran, Inês S. Martins, Faye Moyes, Alban Sagouis, et al. BioTIME 2.0: Expanding and Improving a Database of Biodiversity Time Series. Global Ecol Biogeogr. 2025; 34(5):e70003. https://doi.org/10.1111/geb.70003

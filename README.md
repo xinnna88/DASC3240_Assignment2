@@ -55,6 +55,10 @@ The repository is structured as follows:
 
 Maria Dornelas, Laura H. Antão, Amanda E. Bates, Viviana Brambilla, Jonathan M. Chase, Cher F. Y. Chow, Ada Fontrodona-Eslava, Anne E. Magurran, Inês S. Martins, Faye Moyes, Alban Sagouis, et al. BioTIME 2.0: Expanding and Improving a Database of Biodiversity Time Series. Global Ecol Biogeogr. 2025; 34(5):e70003. https://doi.org/10.1111/geb.70003
 
+Wickham H (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York. ISBN 978-3-319-24277-4, https://ggplot2.tidyverse.org.
+
+Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. doi:10.5281/zenodo.3960218, R package version 0.1.0, https://allisonhorst.github.io/palmerpenguins/.
+
 Cao, J., Herman, A. B., West, G. B., & Bhatt, D. L. (2020). Unraveling why we sleep: Quantitative analysis reveals abrupt transition from neural reorganization to repair in early development. *Science Advances*, *6*(38), eaba0398. <https://doi.org/10.1126/sciadv.aba0398>
 
 Meddis, R. (1983). Sleep mechanisms and functions in humans and animals. In A. Mayes (Ed.), *Sleep mechanisms and functions in humans and animals*. Van Nostrand Reinhold.

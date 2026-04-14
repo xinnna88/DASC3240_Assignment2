@@ -122,9 +122,9 @@ annual_catch <- whale_clean %>%
   group_by(YEAR, Species_label) %>%
   summarise(total_catch = sum(ABUNDANCE, na.rm = TRUE), .groups = "drop")
 
+# Remove rows with missing or zero abundance and missing year
 whale_clean <- whale_data %>%
-  filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>%
-  # Ensure abundance is numeric
+  filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>% 
   mutate(ABUNDANCE = as.numeric(ABUNDANCE))
 
 # Check distinct species names 

@@ -21,7 +21,7 @@ execute:
 Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[XXXX\] to \[XXXX\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
 
 ::: callout
-xxxxxxxxxxxxxx
+During the assignment, I used doubao (豆包) AI tool to help me search for the function prototype of my desired plot and animations and understand the changaeble parameters to improve the visualization effects. I also used it to help debug my R code for the complex interactive plots and animations. In addition, I asked AI to help me rephase my original answers to each question, ensuring that my expressions were logical without grammarly mistakes. I subsequently reviewed and edited the code and take full responsibility for the final version of the code.
 :::
 
 # Dataset
@@ -131,7 +131,7 @@ Data were collected from 2007 to 2009 by Dr. Kristen B. Gorman in partnership wi
 ::: callout
 ### Your answer is here
 
-**For** **Plot I**, I chose an **interactive scatter plot with linear regression lines** created by `plotly`. This explanatory plot visualizes the relationship between bill length and flipper length of different types of penguins. In details, points are coded by penguin species (color) and sex (marker shape). I also added species-specific linear regression lines to better understand whether there are within-group linear trends existing. Compared to static plots, this plot supports real-time data interation rather than passive viewing: users can zoom, pan and hover over points to inspect full individual measurement. All in all, this type of plot is ideal for interactively exploring correlations between morphological traits while comparing groups.
+**For** **Plot I**, I chose an **interactive scatter plot with linear regression lines** created by `plotly`. This explanatory plot visualizes the **relationship between bill length and flipper length among different types of penguins**. In details, points are coded by penguin species (color) and sex (marker shape). I also added species-specific **linear regression lines** to better understand whether there are **within-group linear trends** existing. Compared to static plots, this plot supports real-time data interation rather than passive viewing: users can zoom, pan and hover over points to inspect full individual measurement. All in all, this type of plot is ideal for **interactively exploring correlations between morphological traits while comparing groups**.
 
 **Strengths and weaknesses**
 
@@ -139,7 +139,7 @@ Data were collected from 2007 to 2009 by Dr. Kristen B. Gorman in partnership wi
 
 -   **Weaknesses**: The plot is restricted to a fixed pair of morphological features. The users cannot switch to other body measurements. What's more, the overlapping issues appears in dense data regions. It's hard to distinguish which types of point it is. The `island` and `year` variables are hard to be used in such plots. It cannot show the correlation in accurate numbers.\
 
-**For** **Plot II**, I chose a box plot overlaid with jitter raw data points to display the distribution of body mass across penguin species and sex. Box plot is ideal for this explanatory visualization, as it can clearly summarize statistical distributions (median, IQR, outliers) for group comparisons. I also added jitter points to display every individual penguin’s body mass, which complements the aggregated box plot statistics with raw data context. While the interactive legend allows viewers to toggle sex groups for communicating focused biological patterns.
+**For** **Plot II**, I chose an **interactive box plot overlaid with jitter raw data points** to display the **distribution of body mass across penguin species and sex**. Box plot is ideal for this explanatory visualization, as it can clearly **summarize statistical distributions** **(median, IQR, outliers) for group comparisons**. I also added jitter points to display every individual penguin’s body mass, which complements the aggregated box plot statistics with raw data context. While the **interactive legend allows viewers to toggle sex groups for communicating focused biological patterns.**
 
 **Strengths and Weaknesses**
 
@@ -168,29 +168,27 @@ Note: If you want to specify setting for a code chunk, you can use `#|` for each
 
 ```{r}
 #| echo: true
-#| warning: false
-#| message: false
 
 library(palmerpenguins)
 library(tidyverse)
 library(plotly)
 
-# 数据清洗
+# Load the original dataset & Handle the NaN values
 penguins_clean <- penguins %>% drop_na()
 
-# 定义颜色和形状映射
+# Definition of color and shape of different species
 species_colors <- c("Adelie" = "#1f77b4", "Chinstrap" = "#ff7f0e", "Gentoo" = "#2ca02c")
 sex_symbols   <- c("female" = "circle", "male" = "triangle-up")
 
-# 按 species + sex 分组
+# Group by species + sex 
 groups <- split(penguins_clean, 
                 list(penguins_clean$species, penguins_clean$sex), 
                 drop = TRUE)
 
-# 初始化 plotly 对象
+# Initialise plotly plot 
 p <- plot_ly()
 
-# ---------- 添加散点 traces（属于 legend 图例） ----------
+# Add scatter points (Legend 1)
 for (nm in names(groups)) {
   g  <- groups[[nm]]
   sp <- as.character(unique(g$species))
@@ -203,13 +201,13 @@ for (nm in names(groups)) {
     y      = ~flipper_length_mm,
     type   = "scatter",
     mode   = "markers",
-    name   = paste(sp, sx),                 # 图例显示 "Adelie female" 等
-    legend = "legend",                      # 指定属于第一个图例
+    name   = paste(sp, sx),                 # Show "specie + sex", e.g., "Adelie female" 
+    legend = "legend",                      # First legend
     marker = list(
-      size    = 7,
+      size    = 8,
       opacity = 0.8,
-      color   = species_colors[[sp]],       # 直接指定颜色
-      symbol  = sex_symbols[[sx]],          # 直接指定符号
+      color   = species_colors[[sp]],       # Specific color
+      symbol  = sex_symbols[[sx]],          # Specific shape
       line    = list(width = 0.8, color = "white")
     ),
     text = ~paste(
@@ -224,13 +222,12 @@ for (nm in names(groups)) {
   )
 }
 
-# ---------- 添加回归线 traces（属于 legend2 图例） ----------
-# 为每个物种分别拟合线性回归，保证线条连续且颜色正确
+# Add regression fitted lines (Legend 2)
 for (sp in c("Adelie", "Chinstrap", "Gentoo")) {
   sp_data <- penguins_clean %>% filter(species == sp)
   model   <- lm(flipper_length_mm ~ bill_length_mm, data = sp_data)
   
-  # 生成用于绘制回归线的 x 序列和预测值
+  # Create x sequence & prediction value for fitted line
   x_range <- range(sp_data$bill_length_mm, na.rm = TRUE)
   x_seq   <- seq(x_range[1], x_range[2], length.out = 50)
   y_pred  <- predict(model, newdata = data.frame(bill_length_mm = x_seq))
@@ -241,8 +238,8 @@ for (sp in c("Adelie", "Chinstrap", "Gentoo")) {
     y       = y_pred,
     type    = "scatter",
     mode    = "lines",
-    name    = sp,                           # 图例只显示物种名
-    legend  = "legend2",                    # 指定属于第二个图例
+    name    = sp,                           # show species name only
+    legend  = "legend2",                    # Legend 2
     line    = list(color = species_colors[[sp]], width = 2),
     hoverinfo = "skip"
   )
@@ -258,16 +255,16 @@ p %>%
     ),
     xaxis = list(title = "Bill Length (mm)"),
     yaxis = list(title = "Flipper Length (mm)"),
-    # 第一个图例：散点（物种 + 性别）
+    # First legend
     legend = list(
       title = list(text = "Penguin Species & Sex"),
       x     = 1.02,
       y     = 1,
       xanchor = "left"
     ),
-    # 第二个图例：拟合线
+    # Second legend
     legend2 = list(
-      title = list(text = "Fitted Line"),
+      title = list(text = "Fitted Line by Species"),
       x     = 1.02,
       y     = 0.1,
       xanchor = "left"
@@ -282,20 +279,23 @@ p %>%
 
 ```{r}
 #| echo: true
+
 library(palmerpenguins)
 library(tidyverse)
 library(plotly)
 
+# Load the original dataset & Handle the NaN values
 penguins_clean <- penguins %>% drop_na()
 
+# Box plots using plotly
 plot_ly(penguins_clean, 
         x = ~species, 
         y = ~body_mass_g, 
         color = ~sex,
         colors = c("female" = "pink", "male" = "darkblue"),
         type = "box",
-        boxpoints = "all",
-        jitter = 0.3,
+        boxpoints = "all",     # show all points
+        jitter = 0.3,          # with jitter
         pointpos = -1.8) %>%
   layout(
     title = "Body Mass Distribution by Species and Sex",
@@ -303,7 +303,7 @@ plot_ly(penguins_clean,
     yaxis = list(title = "Body Mass (g)"),
     legend = list(
       title = list(text = "Sex"),
-      x = 1,           # 将图例放置在绘图区域右侧外部
+      x = 1,           
       y = 1,
       xanchor = "left",
       yanchor = "top"
@@ -313,37 +313,36 @@ plot_ly(penguins_clean,
 ```
 
 ::: callout
-### Extra Exploratory Plot due to personal interest (Can Skip)
+### Extra Exploratory Plot For Interest (Can Skip)
 
-For Plot III, this is an **enhanced explanatory interactive scatter plot** with a default view and optional axis-switching dropdown menus. By default, it displays the clear explanatory relationship between body mass and flipper length — structurally and conceptually similar to Plot 1. But, the dropdown menus are additional supportive features to let users access other meaning trait relationships within the same figure, rather than requiring multiple separate explanatory plots.
+**For Plot III,** this is an **enhanced explanatory interactive scatter plot** **with a default view and optional axis-switching dropdown menus.** **By default**, it displays the clear **explanatory relationship between body mass and flipper length** — structurally and conceptually similar to Plot 1. But, the dropdown menus are additional supportive features to let users access other meaning trait relationships within the same figure, rather than requiring multiple separate explanatory plots.
 
-Strengths and weaknesses
+**Strengths and weaknesses**
 
--   Strengths: In its default state, it functions as a clean and focused explanatory visualization, like Plot I, to efficiently communicating the positive relationship between the body mass and flipper length among 3 types of penguin. The added dropdown menus bring practical convenience by allowing users exploring other interesting relationships without switching figures. Legend item clicking still allows users to isolate individual species-sex groups, removing unrelated data to reveal subtle patterns. Standard Plotly interactions (zoom, pan, or hover) further support detailed inspection. Thus, this plot consolidates high-diemnsional data exploration into a single interactive visualization.
+-   **Strengths**: In its default state, it functions as a clean and focused explanatory visualization, like Plot I, to efficiently communicating the positive relationship between the body mass and flipper length among 3 types of penguin. The added dropdown menus bring practical convenience by allowing users exploring other interesting relationships without switching figures. Legend item clicking still allows users to isolate individual species-sex groups, removing unrelated data to reveal subtle patterns. Standard Plotly interactions (zoom, pan, or hover) further support detailed inspection. Thus, this plot consolidates high-diemnsional data exploration into a single interactive visualization.
 
--   Weaknesses: No regression lines are included to highlight linear trends. Similarly, the overlapping issues still appears in dense data regions. Although the plot has included most of features from the data, it still misses the `island` and `year` variables. Viewers must actively interact to access other potential relationships, which are not immediately visible,
+-   **Weaknesses**: No regression lines are included to highlight linear trends. Similarly, the overlapping issues still appears in dense data regions. Although the plot has included most of features from the data, it still misses the `island` and `year` variables. Viewers must actively interact to access other potential relationships, which are not immediately visible,
 
-For Plot III, the plot primarily serves to **clearly explain the positive relationship between body mass and flipper length** through its default view. (i.e., by default selecting body mass and flipper length, the Adelie and Chinstrap penguins have a closer relationship than that of the Gentoo penguins, meanwhile these 3 types of penguin has the positive relationships between these two features). On top of this core function, the dropdown menus are included to let interested viewers conveniently examine other potential morphological relationships within the same figure, eliminating the need to create and consult multiple separate plots for different trait comparisons.
+**For Plot III**, the plot primarily serves to **clearly explain the positive relationship between body mass and flipper length** through its default view. (i.e., by default selecting body mass and flipper length, **the Adelie and Chinstrap penguins have a closer relationship than that of the Gentoo penguins**, **meanwhile these 3 types of penguin has the positive relationships between these two features**). On top of this core function, the **dropdown menus** are included to **let interested viewers conveniently examine other potential morphological relationships** **within the same figure,** eliminating the need to create and consult multiple separate plots for different trait comparisons.
 :::
 
 ### Plot III - Exploratory Plot for Penguin Morphological Traits (Can Skip)
 
 ```{r}
-
 #| echo: true
-#| warning: false
-#| message: false
 
 library(palmerpenguins)
 library(plotly)
 
+# Load the original dataset & Handle the NaN values
 penguins_clean <- na.omit(penguins)
 
-# 按 species + sex 组合手动分组
+# Group by species + sex 
 groups <- split(penguins_clean, 
                 list(penguins_clean$species, penguins_clean$sex), 
                 drop = TRUE)
 
+# Definition of Color and Shape 
 species_colors <- c(
   "Adelie"    = "#1f77b4",
   "Chinstrap" = "#ff7f0e",
@@ -351,11 +350,11 @@ species_colors <- c(
 )
 sex_symbols <- c("female" = "circle", "male" = "triangle-up")
 
-# 初始轴变量（默认 X = Body Mass, Y = Flipper Length）
+# Initialise x-y axes（Default: X = Body Mass, Y = Flipper Length）
 default_x <- "body_mass_g"
 default_y <- "flipper_length_mm"
 
-# ---- 构建初始图：每个 species-sex 组合作为一个独立 trace ----
+# Initialise plotly：Each species-sex combination as an independent trace 
 p <- plot_ly()
 
 for (nm in names(groups)) {
@@ -369,8 +368,8 @@ for (nm in names(groups)) {
     y           = g[[default_y]],
     type        = "scatter",
     mode        = "markers",
-    name        = paste(sp, sx),          # 图例显示 "Adelie female" 等
-    # 不设置 legendgroup，或设置为唯一值，确保每个 trace 独立
+    name        = paste(sp, sx),          # Legend shows: "Species + Sex"
+    # Ensure each trace is independent
     legendgroup = paste(sp, sx),
     showlegend  = TRUE,
     marker      = list(
@@ -393,7 +392,7 @@ for (nm in names(groups)) {
   )
 }
 
-# 生成 X 轴菜单按钮
+# Create X axis Menus Button
 make_x_button <- function(col_name, x_title, label) {
   x_vals <- lapply(names(groups), function(nm) groups[[nm]][[col_name]])
   list(
@@ -406,7 +405,7 @@ make_x_button <- function(col_name, x_title, label) {
   )
 }
 
-# 生成 Y 轴菜单按钮
+# Create Y axis Menus Button
 make_y_button <- function(col_name, y_title, label) {
   y_vals <- lapply(names(groups), function(nm) groups[[nm]][[col_name]])
   list(
@@ -419,7 +418,7 @@ make_y_button <- function(col_name, y_title, label) {
   )
 }
 
-# 添加布局与下拉菜单
+# Add Layout and Dropdown Menus
 p %>%
   layout(
     title = list(
@@ -431,15 +430,14 @@ p %>%
     yaxis = list(title = "Flipper Length (mm)"),
     hovermode = "closest",
     margin = list(r = 180, l = 60, t = 80, b = 60),
-    # 图例设置）
     legend = list(
       title = list(text = "Penguin Species & Sex"),
       x = 1.02, y = 1.05,
       xanchor = "left"
     ),
-    # 给两个下拉菜单添加标题
+    # Add title to two dropdown menus
     annotations = list(
-      # X轴下拉菜单标题
+      # X axis
       list(
         x = 1.15, y = 0.2,
         xref = "paper", yref = "paper",
@@ -447,7 +445,7 @@ p %>%
         showarrow = FALSE,
         font = list(size = 11, color = "black")
       ),
-      # Y轴下拉菜单标题
+      # Y axis
       list(
         x = 1.15, y = 0.0,
         xref = "paper", yref = "paper",
@@ -457,7 +455,7 @@ p %>%
       )
     ),
     updatemenus = list(
-      # X 轴下拉菜单
+      # X axis dropdown menus
       list(
         x       = 1.15,          
         y       = 0.3,
@@ -471,7 +469,7 @@ p %>%
           make_x_button("body_mass_g",      "Body Mass (g)",      "Body Mass")
         )
       ),
-      # Y 轴下拉菜单
+      # Y axis dropdown menus
       list(
         x       = 1.15,
         y       = 0.1,
@@ -498,7 +496,7 @@ p %>%
 ::: callout
 ### Your answer is here
 
-**For Animation I**, this is an **explanatory animated bar chart** that shows penguin population counts and species composition across Biscoe, Dream and Torgersen Islands from 2007 to 2009. Each bar is labelled with the percentage of each species relative to the total island population in a given year. The animated transition over years and faceted layout help viewers clearly observe both population size and proportional structure in a smooth and intuitive way.
+**For Animation I**, this is an **explanatory animated bar chart** that **shows penguin population counts and species composition across Biscoe, Dream and Torgersen Islands from 2007 to 2009.** Each bar is labelled with the percentage of each species relative to the total island population in a given year. The animated transition over years and faceted layout help viewers **clearly observe both population size and proportional structure in a smooth and intuitive way**.
 
 **Strengths and Weaknesses**
 
@@ -506,7 +504,7 @@ p %>%
 
 -   **Weaknesses**: Annual changes in population and proportion are small, so the animation effect is relatively gentle. The chart presents aggregated yearly data and does not reflect individual-level variation. Also, the plot ignores the sex of the penguins.
 
-**For Animation II**, this is an **explanatory animated boxplot**, focusing exclusively on the body mass distribution of Adelie penguins across Biscoe, Dream and Torgersen Islands from 2007 to 2009. A boxplot is chosen as it effectively summarizes key statistical features of Adelie body mass (median, interquartile range, and outliers) across different islands, while the year-by-year animation reveals subtle temporal changes in body mass distribution. The faceted layout by island allows for clear comparison of Adelie body mass across their habitats,
+**For Animation II**, this is an **explanatory animated boxplot**, **focusing exclusively on the body mass distribution of Adelie penguins across Biscoe, Dream and Torgersen Islands from 2007 to 2009.** A boxplot is chosen as it **effectively summarizes key statistical features of Adelie body mass** (median, interquartile range, and outliers) **across different islands**, while the **year-by-year animation** reveals subtle **temporal changes in body mass distribution**. The faceted layout by island allows for clear comparison of Adelie body mass across their habitats,
 
 **Strengths and Weaknesses**
 
@@ -514,7 +512,7 @@ p %>%
 
 -   **Weaknesses**: The animation effect is relatively subtle due to the small annual changes in Adelie body mass, making dramatic temporal shifts less apparent. The plot does not include a sex dimension, so it fails to reveal potential sexual dimorphism in Adelie body mass across islands.
 
-**For Animation III**, this is an **explanatory animated boxplot**, illustrating the body mass distribution of male and female Adelie penguins across Biscoe, Dream and Torgersen Islands from 2007 to 2009. The boxplot is selected because it effectively visualises the central tendency and spread of body mass separately for male and female Adelie penguins, making sexual size dimorphism easy to observe. Animation over years is used to reveal temporal changes in body mass across sexes, while faceting by island supports direct habitat comparison. This plot also extends the previous morphological animation by introducing sex as a key variable.
+**For Animation III**, this is an **explanatory animated boxplot**, illustrating the **body mass distribution of male and female Adelie penguins across Biscoe, Dream and Torgersen Islands from 2007 to 2009**. The boxplot is selected because it effectively **visualises the central tendency and spread of body mass separately for male and female Adelie penguins,** making sexual size dimorphism easy to observe. Animation over years is used to reveal **temporal changes in body mass across sexes**, while faceting by island supports **direct habitat comparison**. This plot also extends the previous morphological animation by introducing sex as a key variable.
 
 **Strengths and Weaknesses**
 
@@ -543,14 +541,12 @@ Note: At least one animation is required, but multiple animations are allowed
 
 ```{r}
 #| echo: true
-#| warning: false
-#| message: false
 
 library(palmerpenguins)
 library(tidyverse)
 library(gganimate)
 
-# 数据准备
+# Load the original dataset & Handle the NaN values
 penguins_clean <- penguins %>% drop_na()
 
 penguin_distribution <- penguins_clean %>%
@@ -564,7 +560,7 @@ penguin_distribution <- penguins_clean %>%
     group_id = paste(island, species)
   )
 
-# 动画代码
+# Animation: Bar chart + Percentage for each island
 anim1 <- ggplot(
   penguin_distribution,
   aes(x = species, y = count, fill = species, group = group_id)
@@ -580,7 +576,7 @@ anim1 <- ggplot(
   ) +
   
   geom_text(
-    aes(label = "%"),
+    aes(label = "%", group=species),
     vjust = -1,
     size = 5,
     fontface = "bold",
@@ -600,18 +596,20 @@ anim1 <- ggplot(
     subtitle = "Year: {round(frame_time, 0)}",
     x = "Species",
     y = "Number of Individuals",
-    fill = "Species"
+    fill = "Species",
+    caption = "The number indicates the percentage of the species\nto the total population of the island in that year"
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
     plot.subtitle = element_text(size = 16, face = "bold"),
-    axis.title.y = element_text(size = 14, face = "bold", margin = margin(r = 15)),
-    axis.title.x = element_text(size = 14, face = "bold", margin = margin(t = 10)),
-    axis.text = element_text(size = 13, face = "bold"),
+    plot.caption = element_text(size = 12, face = "bold", hjust = 1.2, lineheight = 1.2, margin = margin(t = 15, b = 5)),
+    axis.title.y = element_text(size = 16, face = "bold", margin = margin(r = 15)),
+    axis.title.x = element_text(size = 16, face = "bold", margin = margin(t = 10)),
+    axis.text = element_text(size = 15, face = "bold"),
     strip.text = element_text(size = 14, face = "bold"),
-    legend.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 13, face = "bold")
+    legend.title = element_text(size = 15, face = "bold"),
+    legend.text = element_text(size = 14, face = "bold")
   ) +
   transition_time(year) +
   ease_aes('sine-in-out')
@@ -620,7 +618,7 @@ animate(anim1,
         nframes = 200, 
         fps = 20, 
         width = 950, 
-        height = 600,
+        height = 580,
         end_pause = 30)
 ```
 
@@ -628,44 +626,38 @@ animate(anim1,
 
 ```{r}
 #| echo: true
-#| warning: false
-#| message: false
 
 library(palmerpenguins)
 library(tidyverse)
 library(gganimate)
 
-# 数据清洗：仅保留 Adelie 企鹅）
+# Load the original dataset, Handle the NaN values and Keep Adelie species only
 penguins_clean <- penguins %>% drop_na() %>%
-  filter(species == "Adelie") %>%  # 
+  filter(species == "Adelie") %>%  
   mutate(year = as.numeric(year))
 
-# 动画绘图：
+# Animation：Box plot grouped by island
 anim2 <- ggplot(penguins_clean, 
-                aes(x = species, y = body_mass_g, fill = species)) +
+                aes(x = island, y = body_mass_g, fill = species)) +
   geom_boxplot(alpha = 0.8, outlier.size = 2) +
-  
-  facet_wrap(~island) +
   scale_fill_manual(values = c("Adelie" = "#1f77b4")) +
   labs(
     title = "Adelie Penguin Body Mass Distribution Across Three Islands (2007-2009)",
     subtitle = "Year: {round(frame_time, 0)}",
-    x = "Species",
+    x = "Island",  
     y = "Body Mass (g)",
-    fill = "Species",
-    caption = "Adelie body mass remains stable across three islands\nwith minor annual fluctuations"
+    fill = "Species"
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
     plot.subtitle = element_text(size = 16, face = "bold"),
-    plot.caption = element_text(size = 12, face = "bold", hjust = 1, lineheight = 1.2, margin = margin(t = 15, b = 5)),
-    axis.title.y = element_text(size = 14, face = "bold", margin = margin(r = 15)),
-    axis.title.x = element_text(size = 14, face = "bold", margin = margin(t = 10)),
-    axis.text = element_text(size = 13, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold", margin = margin(r = 15)),
+    axis.title.x = element_text(size = 16, face = "bold", margin = margin(t = 10)),
+    axis.text = element_text(size = 15, face = "bold"),
     strip.text = element_text(size = 14, face = "bold"),
-    legend.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 13, face = "bold")
+    legend.title = element_text(size = 15, face = "bold"),
+    legend.text = element_text(size = 14, face = "bold")
   ) +
   transition_time(year) +
   ease_aes('sine-in-out')
@@ -682,41 +674,39 @@ animate(anim2,
 
 ```{r}
 #| echo: true
-#| warning: false
-#| message: false
 
 library(palmerpenguins)
 library(tidyverse)
 library(gganimate)
 
-# 仅 Adelie 企鹅 + 清洗性别数据
+# Load the original dataset, Handle the NaN values and Keep Adelie species only
 penguins_clean <- penguins %>% drop_na() %>%
   filter(species == "Adelie") %>%
   mutate(year = as.numeric(year))
 
+# Animation: Box plot grouped by island + sex
 anim3 <- ggplot(penguins_clean, 
-                aes(x = sex, y = body_mass_g, fill = sex)) +
+                aes(x = island, y = body_mass_g, fill = sex)) +  # X轴改为 island
   geom_boxplot(alpha = 0.8, outlier.size = 2) +
   
-  facet_wrap(~island) +
   scale_fill_manual(values = c("male" = "#4472C4", "female" = "#E0578F")) +
   labs(
     title = "Adelie Penguin Body Mass by Sex Across Three Islands (2007-2009)",
     subtitle = "Year: {round(frame_time, 0)}",
-    x = "Sex",
+    x = "Island",  
     y = "Body Mass (g)",
     fill = "Sex"
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
     plot.subtitle = element_text(size = 16, face = "bold"),
-    axis.title.y = element_text(size = 14, face = "bold", margin = margin(r = 15)),
-    axis.title.x = element_text(size = 14, face = "bold", margin = margin(t = 10)),
-    axis.text = element_text(size = 13, face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold", margin = margin(r = 15)),
+    axis.title.x = element_text(size = 16, face = "bold", margin = margin(t = 10)),
+    axis.text = element_text(size = 15, face = "bold"),
     strip.text = element_text(size = 14, face = "bold"),
-    legend.title = element_text(size = 14, face = "bold"),
-    legend.text = element_text(size = 13, face = "bold")
+    legend.title = element_text(size = 15, face = "bold"),
+    legend.text = element_text(size = 14, face = "bold")
   ) +
   transition_time(year) +
   ease_aes('sine-in-out')

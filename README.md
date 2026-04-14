@@ -33,18 +33,31 @@ This repository contains the DASC 3240 Assignment II submissions for Group B. Ea
 
 The repository is structured as follows:
 
--   **README.md** — This file; provides an overview of the project structure and group members.
--   **L17_Assignment_CHEN-Yanyu.qmd** — CHEN Yanyu's individual analysis of the `ggplot2::msleep` dataset, exploring how mammalian body size relates to sleep duration across different diet types and taxonomic orders.
--   **L17_Assignment_XXX.qmd ...**
+- **`README.md`** — This file; provides an overview of the project, group members, and instructions to run the code.
+- **`data/`** — Folder containing all raw datasets used in this assignment (including `BIOTIME_raw_data_192.csv` and `BIOTIME_raw_data_232.csv`).
+- **`L17_Assignment_CHEN-Yanyu.qmd`** — CHEN Yanyu's individual analysis of the `ggplot2::msleep` dataset, exploring how mammalian body size relates to sleep duration across different diet types and taxonomic orders.
+- **`L17_Assignment_WING-YuiYan.qmd`** — WING Yui Yan's analysis of the `BIOTIME_raw_data_192` dataset, exploring annual catch trends of major whale species in the Southern Ocean from 1932 to 1980, with a focus on the impact of industrial whaling across different species and decades.
+- **`L17_Assignment_LI-Yuan.qmd`** — LI Yuan's analysis of `ggplot2::midwest`
+- **`L17_Assignment_CHEN-HongXing.qmd`** — CHEN Hong Xing's analysis of `palmerpenguins::penguins`
+- **`L17_Assignment_YING-YuLing.qmd`** — YING Yu Ling's analysis of `BIOTIME_raw_data_232.csv`
 
 # Member contributions
 
 | Member | Dataset | Contribution |
 |------------------------|------------------------|------------------------|
 | CHEN, Yanyu | `ggplot2::msleep` | Visualization of `ggplot2::msleep` |
-| *(other members)* | *(to be filled)* | *(to be filled)* |
+| WING, Yui Yan | `BIOTIME_raw_data_192` | Visualization of `BIOTIME_raw_data_192` |
+| LI, Yuan | `ggplot2::midwest` | Visualization of `ggplot2::midwest` |
+| CHEN, Hong Xing | `palmerpenguins::penguins` | Visualization of `palmerpenguins::penguins` |
+| YING, Yu Ling | `BIOTIME_raw_data_232.csv` | Visualization of `BIOTIME_raw_data_232.csv` |
 
-# References
+# Reference
+
+Maria Dornelas, Laura H. Antão, Amanda E. Bates, Viviana Brambilla, Jonathan M. Chase, Cher F. Y. Chow, Ada Fontrodona-Eslava, Anne E. Magurran, Inês S. Martins, Faye Moyes, Alban Sagouis, et al. BioTIME 2.0: Expanding and Improving a Database of Biodiversity Time Series. Global Ecol Biogeogr. 2025; 34(5):e70003. https://doi.org/10.1111/geb.70003
+
+Wickham H (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York. ISBN 978-3-319-24277-4, https://ggplot2.tidyverse.org.
+
+Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. doi:10.5281/zenodo.3960218, R package version 0.1.0, https://allisonhorst.github.io/palmerpenguins/.
 
 Cao, J., Herman, A. B., West, G. B., & Bhatt, D. L. (2020). Unraveling why we sleep: Quantitative analysis reveals abrupt transition from neural reorganization to repair in early development. *Science Advances*, *6*(38), eaba0398. <https://doi.org/10.1126/sciadv.aba0398>
 

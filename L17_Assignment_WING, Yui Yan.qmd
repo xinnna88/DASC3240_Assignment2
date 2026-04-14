@@ -1,0 +1,233 @@
+---
+title: "Assignment II: Group B"
+author: "WING, Yui Yan"
+format: 
+  html:
+    toc: true
+    code-fold: false
+    embed-resources: true # <= check here: https://quarto.org/docs/reference/formats/html.html
+execute:
+  echo: true    # <= knitr::opts_chunk$set(echo = TRUE) in Rmarkdown
+  warning: false
+  message: false
+---
+
+# Name
+
+[**Name**]{style="color:red"}**: WING,Yui Yan**
+
+# Generative AI declaration
+
+Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[grok\] to \[help me review me code\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
+
+::: callout
+xxxxxxxxxxxxxx
+:::
+
+# Dataset
+
+Each group member may choose either of the following dataset:
+
+**Built-in dataset**
+
+-   `palmerpenguins::penguins`
+-   `ggplot2::msleep`
+-   `ggplot2::midwest`
+-   `datasets::quakes`
+
+**Public dataset**
+
+BIOTIME (CC0) <https://biotime.st-andrews.ac.uk/usageGuidelines.php>
+
+-   `BIOTIME_raw_data_192.csv` (uploaded on Canvas) (Whale data from <https://biotime.st-andrews.ac.uk/selectStudy.php?study=192>)
+-   `BIOTIME_raw_data_232.csv` (uploaded on Canvas) (Fish data from <https://biotime.st-andrews.ac.uk/selectStudy.php?study=232>)
+
+# Figures by each group member
+
+### Dataset
+
+::: callout-important
+[Which dataset did you choose?]{style="color:darkred; font-weight:bold;"}
+:::
+
+::: callout
+### Your answer is here
+
+This study uses BioTIME Dataset 192, “Whale Catches in Southern Ocean (OBIS - Australian Antarctic Data Centre)”.
+:::
+
+### Introduction
+
+::: callout-important
+[What is the dataset about? What variables are included in the data? How was the data taken/measured?]{style="color:darkred; font-weight:bold;"}
+:::
+
+::: callout
+This dataset records commercial whale catches in the Southern Ocean during austral summers from 1931/32 to 1979/80 (42 years).  The data include the number of individuals caught (ABUNDANCE) for different whale species (valid_name), the year of the austral summer (YEAR), and the central latitude and longitude  where the catches occurred (LATITUDE, LONGITUDE). A total of six whale species are present: Balaenoptera physalus , B. musculus, B. borealis , B. bonaerensis, Megaptera novaeangliae , and Physeter macrocephalus .
+
+:::
+
+### Interactive plot(s) using `plotly`
+
+::: callout-important
+[Please explain which plot type you choose and why. Also, please discuss the strengths and weaknesses of your plot(s).]{style="color:darkred; font-weight:bold;"}
+:::
+
+::: callout
+### Your answer is here
+
+I chose an interactive line chart with points, where each line represents a whale species and shows the change in total annual catch over time (1932–1980). This is because the dataset has a clear time dimension (YEAR) and a continuous response (total catch per species). A line chart is the standard, intuitive way to visualise trends over time and allows direct comparison of catch histories on the same axes. One strength is clear trend visualisation – rising and falling catches are immediately visible. However, a weakness is that lines may overlap and cross, making them hard to distinguish in dense areas,especially when catches of different species are similar.
+:::
+
+Note: At least one plot is required, but multiple plots are allowed
+
+::: callout-important
+[What is the purpose of this visualization?]{style="color:darkred; font-weight:bold;"}
+:::
+
+::: callout
+### Your answer is here
+
+The purpose is to show the time trends of industrial whaling in the Southern Ocean. By comparing species‑specific catch histories and turning points, it shows which species were most heavily caught, when each species reached its peak catch, and how quickly catches decreased.
+:::
+
+Note: If you want to specify setting for a code chunk, you can use `#|` for each option (for example, `#| echo: true`). Rmarkdown code chunk still works (for example, `{r echo = true}`), but Quarto style is recommended.
+
+```{r}
+
+library(tidyverse)  
+library(lubridate)   
+library(plotly)
+library(viridis)
+
+whale_data <- read_csv("data/BIOTIME_raw_data_192.csv")
+
+whale_clean <- whale_data %>%
+  filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>%
+  mutate(ABUNDANCE = as.numeric(ABUNDANCE))
+
+# Create a short label for plotting 
+whale_clean <- whale_clean %>%
+  mutate(Species_label = case_when(
+    str_detect(valid_name, "physalus")    ~ "Fin whale",
+    str_detect(valid_name, "musculus")    ~ "Blue whale",
+    str_detect(valid_name, "borealis")    ~ "Sei whale",
+    str_detect(valid_name, "bonaerensis") ~ "Antarctic minke whale",
+    str_detect(valid_name, "novaeangliae")~ "Humpback whale",
+    TRUE ~ valid_name   # fallback
+  ))
+
+# Summarize total catch by year and species
+annual_catch <- whale_clean %>%
+  group_by(YEAR, Species_label) %>%
+  summarise(total_catch = sum(ABUNDANCE, na.rm = TRUE), .groups = "drop")
+
+# Remove rows with missing or zero abundance and missing year
+whale_clean <- whale_data %>%
+  filter(!is.na(ABUNDANCE), ABUNDANCE > 0, !is.na(YEAR)) %>% 
+  mutate(ABUNDANCE = as.numeric(ABUNDANCE))
+
+# Check distinct species names 
+unique(whale_clean$valid_name)
+
+# Create an interactive line plot with points using plotly
+species_list <- unique(annual_catch$Species_label)# Get unique species for color mapping
+n_col <- length(species_list) # Generate a color palette with enough distinct colors for each species
+base_colors <- viridis(n_col, option = "D")   
+
+p <- plot_ly(annual_catch, 
+             x = ~as.numeric(YEAR), 
+             y = ~total_catch, 
+             color = ~Species_label,
+             colors = base_colors,
+             type = 'scatter', 
+             mode = 'lines+markers',
+             line = list(width = 2),
+             marker = list(size = 4),
+             text = ~paste("Species:", Species_label, 
+                           "<br>Year:", YEAR, 
+                           "<br>Catch:", total_catch),
+             hoverinfo = "text") %>%
+  layout(title = "Annual whale catches",
+         xaxis = list(title = "Year", type = "linear", dtick = 5),
+         yaxis = list(title = "Catch"),
+         legend = list(title = list(text = "Species")),
+         margin = list(b = 60)) 
+
+
+p
+```
+
+
+
+
+
+### Animation using `gganimate`
+
+::: callout-important
+[Please explain which animation type you choose and why. Also, please discuss the strengths and weaknesses of your animation.]{style="color:darkred; font-weight:bold;"}
+:::
+
+::: callout
+### Your answer is here
+
+A time‑series point animation that shows the spatial distribution of whale catches for each austral summer Points appear, change size according to catch abundance, and shift across longitude/latitude as the year progresses. The dataset has both spatial (latitude/longitude) and temporal (year) dimensions. An animation allows the viewer to see the overall change in catch locations year by year, which species are caught in which areas, and how catch intensity varies over time.
+
+Strengths include shows how catches change over time and place which  static maps cannot easily show. However, weaknesses include potential overplotting , and it may be difficult to track specific points or species without additional annotations.The animation progresses at a fixed speed, so viewers cannot extract exact values and may miss specific years.
+:::
+
+Note: At least one animation is required, but multiple animations are allowed
+
+::: callout-important
+[What is the purpose of this visualization?]{style="color:darkred; font-weight:bold;"}
+:::
+
+::: callout
+### Your answer is here
+
+To reveal how the spatial distribution of whale catches changed over 42 years in the Southern Ocean. It show whether whaling fleets moved to higher latitudes, which species dominated different regions, and how catch sizes evolved annually. 
+:::
+
+```{r}
+library(tidyverse)
+library(gganimate)
+library(gifski)
+library(transformr)
+
+# Prepare spatial data for animation
+spatial_data <- whale_clean %>%
+  filter(!is.na(LATITUDE), !is.na(LONGITUDE)) %>%
+  mutate(LONGITUDE_jitter = LONGITUDE + runif(n(), -0.2, 0.2))
+
+# Calculate latitude limits for better visualization
+lat_min <- min(spatial_data$LATITUDE, na.rm = TRUE)
+lat_max <- max(spatial_data$LATITUDE, na.rm = TRUE)
+
+# Add some padding to latitude limits
+ylim_custom <- c(lat_min - 2, lat_max + 2)
+
+# Create the base plot
+p_spatial <- ggplot(spatial_data, aes(x = LONGITUDE_jitter, y = LATITUDE, 
+                                      size = ABUNDANCE, color = Species_label)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(range = c(1, 10), name = "Catch (individuals)") +
+  scale_color_viridis_d(option = "D", name = "Species") +
+  labs(title = "Spatial distribution of whale catches over time",
+       subtitle = "Year: {frame_time}",
+       x = "Longitude ", y = "Latitude",
+       caption = "Point size = number of individuals caught in 1° cell") +
+  coord_quickmap(xlim = c(min(spatial_data$LONGITUDE) - 5, 
+                          max(spatial_data$LONGITUDE) + 5),
+                 ylim = ylim_custom) +   
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# Create the animation
+anim_spatial <- p_spatial +
+  transition_time(YEAR) +
+  ease_aes('linear') +
+  shadow_mark(alpha = 0.2, size = 0.8)
+
+animate(anim_spatial, nframes = 300, fps = 5)
+```
+

@@ -2,30 +2,30 @@
 
 # Group member list
 
-- WING, Yui Yan (Leader & Owner)
-- CHEN, Hongxing
-- CHEN, Yanyu
-- LI, Yuan
-- YING, Yuling
+-   WING, Yui Yan (Leader & Owner)
+-   CHEN, Hongxing
+-   CHEN, Yanyu
+-   LI, Yuan
+-   YING, Yuling
 
 # Dataset
 
-Each group member may choose either of the following dataset:  
+Each group member may choose either of the following dataset:
 
-**Built-in dataset**  
+**Built-in dataset**
 
-- `palmerpenguins::penguins`  
-- `ggplot2::msleep`  
-- `ggplot2::midwest`  
-- `datasets::Orange`  
-- `datasets::quakes`  
+-   `palmerpenguins::penguins`\
+-   `ggplot2::msleep`\
+-   `ggplot2::midwest`\
+-   `datasets::Orange`\
+-   `datasets::quakes`
 
-**Public dataset**  
+**Public dataset**
 
-BIOTIME (CC0) <https://biotime.st-andrews.ac.uk/usageGuidelines.php>  
+BIOTIME (CC0) <https://biotime.st-andrews.ac.uk/usageGuidelines.php>
 
-- `BIOTIME_raw_data_192.csv` (uploaded on Canvas) (Whale data from <https://biotime.st-andrews.ac.uk/selectStudy.php?study=192>)  
-- `BIOTIME_raw_data_232.csv` (uploaded on Canvas) (Fish data from <https://biotime.st-andrews.ac.uk/selectStudy.php?study=232>)  
+-   `BIOTIME_raw_data_192.csv` (uploaded on Canvas) (Whale data from <https://biotime.st-andrews.ac.uk/selectStudy.php?study=192>)\
+-   `BIOTIME_raw_data_232.csv` (uploaded on Canvas) (Fish data from <https://biotime.st-andrews.ac.uk/selectStudy.php?study=232>)
 
 # Introduction
 

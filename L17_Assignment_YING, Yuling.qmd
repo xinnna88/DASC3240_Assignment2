@@ -14,14 +14,14 @@ execute:
 
 # Name
 
-[**Name**]{style="color:red"}**: XXXXXX**
+[**Name**]{style="color:red"}**: YING, Yuling**
 
 # Generative AI declaration
 
 Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[XXXX\] to \[XXXX\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
 
 ::: callout
-xxxxxxxxxxxxxx
+During the assignment, I used DeepSeek AI to help debug R code and refine the clarity of my written responses. I subsequently reviewed and edited the code and take full responsibility for the final version of the code.
 :::
 
 # Dataset
@@ -53,7 +53,7 @@ BIOTIME (CC0) <https://biotime.st-andrews.ac.uk/usageGuidelines.php>
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+I chose the **BIOTIME_raw_data_232.csv** dataset.
 :::
 
 ### Introduction
@@ -65,7 +65,17 @@ xxxxxxxxxxxxxx
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Dataset overview**: 
+BIOTIME Study 232 contains Antarctic fish survey data collected from 1968 to 1999, with 7,098 observations across 151 species (Dornelas et al., 2025). The data were gathered through research vessel trawl surveys in the Southern Ocean.
+
+**Variables**: 
+- `ABUNDANCE`: Number of individuals per sample - `BIOMAS`: Biomass in grams (contains missing values) 
+- `valid_name`: Scientific species name 
+- `LATITUDE`, `LONGITUDE`: Sampling coordinates (range: -69.4° to -40.1° S, 12.2° to 159.0° E) 
+- `DAY`, `MONTH`, `YEAR`: Sampling date
+
+**Data collection method**: 
+Research vessels conducted trawl surveys. Each record represents one sampling event where fish were caught, identified to species, counted (ABUNDANCE), and weighed (BIOMAS). Geographic coordinates and dates were recorded for each event.
 :::
 
 ### Interactive plot(s) using `plotly`
@@ -77,7 +87,25 @@ xxxxxxxxxxxxxx
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Plot type chosen**: 
+Scatter plot on geographic coordinates using `plot_ly()` (Sievert, 2020) with `type = 'scatter', mode = 'markers'`. X-axis = longitude, Y-axis = latitude, color = species, size = abundance.
+
+**Why this plot type**: 
+- Geographic coordinates naturally map to a 2D scatter plot, preserving true spatial relationships 
+- Color encoding allows visual separation of species without needing separate panels 
+- Size encoding makes abundance hotspots immediately visible 
+- Interactive hover provides detailed information on demand without cluttering the static view
+
+**Strengths**: 
+- **Interactivity**: Users can hover to see exact values, zoom into regions, and toggle species via the legend 
+- **Multi-dimensional**: Four variables (lon, lat, species, abundance) displayed simultaneously 
+- **Intuitive**: Spatial patterns are easily interpreted by viewers, as geographic position directly maps to visual position on the plot
+- **Zoom and pan**: Users can explore regions of interest in greater detail
+
+**Weaknesses**: 
+- **Overplotting**: Points overlap in densely sampled areas; partial transparency (`opacity = 0.7`) mitigates but does not fully solve this 
+- **No basemap**: Lacks coastline reference 
+- **File size**: Interactive HTML output is larger than a static image
 :::
 
 Note: At least one plot is required, but multiple plots are allowed
@@ -89,15 +117,52 @@ Note: At least one plot is required, but multiple plots are allowed
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Purpose**: 
+To reveal spatial distribution patterns of Antarctic fish species. 
+The visualization allows viewers to identify: 
+- Whether different species occupy distinct geographic regions 
+- Where abundance hotspots occur for each species 
+- Spatial overlap or segregation among species
+
+The message is that Antarctic fish species show distinct spatial distributions, likely reflecting different habitat preferences and ecological niches.
 :::
 
 Note: If you want to specify setting for a code chunk, you can use `#|` for each option (for example, `#| echo: true`). Rmarkdown code chunk still works (for example, `{r echo = true}`), but Quarto style is recommended.
 
 ```{r}
 #| echo: true
-# YOUR CODE HERE
-# xxxxx
+library(tidyverse)
+library(plotly)
+
+df <- read.csv("BIOTIME_raw_data_232.csv")
+
+# Select top 5 species by record count
+selected <- df %>%
+  count(valid_name, sort = TRUE) %>%
+  slice(1:5) %>%
+  pull(valid_name)
+
+df_clean <- df %>%
+  filter(valid_name %in% selected) %>%
+  filter(!is.na(LATITUDE), !is.na(LONGITUDE))
+
+plot_ly(
+  data = df_clean,
+  x = ~LONGITUDE,
+  y = ~LATITUDE,
+  color = ~valid_name,
+  size = ~ABUNDANCE,
+  sizes = c(5, 30),
+  type = 'scatter',
+  mode = 'markers',
+  text = ~paste("Species:", valid_name, "<br>Abundance:", ABUNDANCE, "<br>Year:", YEAR),
+  hoverinfo = 'text',
+  opacity = 0.7) %>%
+  layout(
+    title = "Spatial Distribution of Top 5 Antarctic Fish Species",
+    xaxis = list(title = "Longitude"),
+    yaxis = list(title = "Latitude"),
+    legend = list(title = list(text = "Species")))
 ```
 
 ### Animation using `gganimate`
@@ -109,7 +174,24 @@ Note: If you want to specify setting for a code chunk, you can use `#|` for each
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Animation type chosen**: 
+`transition_states()` from the `gganimate` package (Pedersen & Robinson, 2024) across `YEAR`.
+
+**Why this animation type**: 
+- `YEAR` is a discrete variable; `transition_states()` is designed specifically for animating between discrete states 
+- Each frame represents one year, with the current year displayed in the title (`{closest_state}`) 
+- `cubic-in-out` easing creates smooth, natural-looking transitions between yearly snapshots 
+- `enter_fade()` and `exit_fade()` make points appear/disappear gradually rather than abruptly
+
+**Strengths**: 
+- **Temporal narrative**: Reveals how distributions change (or remain stable) over a decade 
+- **Engaging**: Motion draws viewer attention and aids memory 
+- **Consistent encoding**: Same color and size scheme as the static plot for easy comparison
+
+**Weaknesses**: 
+- **Limited time range**: Animation restricted to 1985-1993 due to sparse sampling in other years 
+- **No true movement**: Points fade in/out to show presence or absence per year, rather than moving continuously between locations 
+- **Loss of interactivity**: GIF format cannot be hovered or zoomed
 :::
 
 Note: At least one animation is required, but multiple animations are allowed
@@ -121,10 +203,34 @@ Note: At least one animation is required, but multiple animations are allowed
 ::: callout
 ### Your answer is here
 
-xxxxxxxxxxxxxx
+**Purpose**: 
+To show temporal changes in spatial distribution across the best-sampled decade (1985-1993). 
+The animation reveals whether: 
+- Species appear consistently in the same regions year after year 
+- Distribution ranges expand or contract over time 
+- Sampling effort varies across years (visible as changes in point density)
+
+The message is that while sampling intensity fluctuates, the core geographic ranges of these species remain relatively stable over the observed period, suggesting persistent habitat associations.
 :::
 
 ```{r}
-# YOUR CODE HERE
-# xxxxx
+#| echo: true
+library(gganimate)
+
+df_anim <- df_clean %>%
+  filter(YEAR >= 1985, YEAR <= 1993) %>%
+  mutate(YEAR = as.integer(YEAR))
+
+p <- df_anim %>%
+  ggplot(aes(x = LONGITUDE, y = LATITUDE, color = valid_name, size = ABUNDANCE)) +
+  geom_point(alpha = 0.7) +
+  scale_size(range = c(2, 15)) +
+  labs(title = "Year: {closest_state}", x = "Longitude", y = "Latitude") +
+  theme_minimal()
+
+p +
+  transition_states(YEAR, transition_length = 2, state_length = 1) +
+  ease_aes('cubic-in-out') +
+  enter_fade() +
+  exit_fade()
 ```

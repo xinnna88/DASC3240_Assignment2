@@ -18,7 +18,7 @@ execute:
 
 # Generative AI declaration
 
-Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used \[grok\] to \[help me review me code\]. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
+Students may use generative AI tools during assignment, for example, to check and improve code, provided that the content is original and reflects the student's own contributions. If generative AI is used, students must declare its use in the box below. An example statement is: “*During the assignment, I used grok to help me review me code. I subsequently reviewed and edited the code and take(s) full responsibility for the final version of the code.”*
 
 ::: callout
 xxxxxxxxxxxxxx
@@ -63,7 +63,30 @@ This study uses BioTIME Dataset 192, “Whale Catches in Southern Ocean (OBIS - 
 :::
 
 ::: callout
-This dataset records commercial whale catches in the Southern Ocean during austral summers from 1931/32 to 1979/80 (42 years).  The data include the number of individuals caught (ABUNDANCE) for different whale species (valid_name), the year of the austral summer (YEAR), and the central latitude and longitude  where the catches occurred (LATITUDE, LONGITUDE). A total of six whale species are present: Balaenoptera physalus , B. musculus, B. borealis , B. bonaerensis, Megaptera novaeangliae , and Physeter macrocephalus .
+This dataset is obtained from the BioTIME database (Study ID 192). It records commercial whale catches in the Southern Ocean during the austral summers from 1931/32 to 1979/80 (42 years in total).
+
+There are 7122 records(rows). The dataset contains the following variables:
+
+ABUNDANCE: Number of individuals caught (catch count)
+BIOMASS: Biomass of the caught whales (this column is empty / not recorded in the dataset)
+valid_name: Scientific name of the whale species
+SAMPLE_DESC: Additional sampling or catch description 
+LATITUDE: Central latitude of the catch location
+LONGITUDE: Central longitude of the catch location
+DAY: Day of the catch (this column is empty)
+MONTH: Month of the catch (this column is empty)
+YEAR: Year of the austral summer whaling season
+
+A total of six whale species are recorded in the dataset:
+
+Balaenoptera physalus 
+Balaenoptera musculus 
+Balaenoptera borealis 
+Balaenoptera bonaerensis 
+Megaptera novaeangliae 
+Physeter macrocephalus
+
+These data originate from historical commercial whaling records. Catches were reported by whaling vessels and stations during the austral summer seasons.These data have been exposed as an OBIS (Ocean Biogeographic Information System) resource via DiGIR (Distributed Generic Information Retrieval (DiGIR))
 
 :::
 

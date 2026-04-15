@@ -140,6 +140,10 @@ Note: If you want to specify setting for a code chunk, you can use `#|` for each
 #| echo: true
 # YOUR CODE HERE
 
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("plotly")) install.packages("plotly")
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("tidyr")) install.packages("tidyr")
 library(ggplot2)
 library(plotly)
 library(dplyr)
@@ -268,6 +272,7 @@ State-level comparison: Use color/shape encoding to distinguish 5 Midwest states
 ```{r}
 # YOUR CODE HERE
 
+if (!require("gganimate")) install.packages("gganimate")
 library(gganimate)
 
 # Animation showing three education level groups
